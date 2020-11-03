@@ -73,7 +73,7 @@ class WiiUPro():
                         if str(self.id) == "0203":
                             print("C stick Vertically")
                         """
-                        print(self.fullid)
+                        print(int(self.fullid[-8:-6], 16))
 
         except OSError:
             self.num += 1
@@ -89,7 +89,7 @@ class WiiUPro():
                     if self.id[-4:] == "0105":
                         os.system("clear")
                     else:
-                        print(self.id)
+                        print(self.id[-8:])
         except OSError:
             self.num += 1
 
