@@ -1,4 +1,8 @@
 from __future__ import print_function
+from nonblock import nonblock_read
+from time import sleep
+import os
+import select
 import sys
 B = "0100"
 A = "0101" 
@@ -65,15 +69,20 @@ class Remote():
                 }
         self.idlist = self.buttons.values()
         self.callbacks = {}
+        self.remote = open("/dev/input/js{}".format(self.num), "rb", buffering=0)
+        self.remote.read(8 * 21)
+        def __del__(self):
+            self.remote.close()
+
 
     def create_callback(self, button, func, on="01"):
         if not str(button)[-4:] in self.idlist and not str(button)[-4:-2] == "02":
             raise ValueError("Fatal: Wrong Value For Button `{}'".format(button))
         self.callbacks[(button, on)] = func
 
-    def check_callbacks(self):
-        with open("/dev/input/js{}".format(self.num), "rb") as self.remote:
-            self.remote.read(8 * 21)
+    def update(self):
+        self.r, w, x = select.select([self.remote], [], [], 0)
+        if self.remote in self.r:
             self.fullid = self.remote.read(8).hex()
             if str(self.fullid[-4:-2]) != "02":
                 self.func = self.callbacks.get(("0000", str(self.fullid[-8:-6])))
@@ -82,6 +91,8 @@ class Remote():
                 self.func = self.callbacks.get((str(self.fullid[-4:]), str(self.fullid[-8:-6])))
                 if self.func:
                     self.func(Button(self.buttonss.get(self.fullid[-4:]), self.fullid[-8:-6], self.fullid))
+
+
 
 class Button():
     def __init__(self, button, on, buttonid):

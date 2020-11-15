@@ -17,4 +17,4 @@ remote.create_callback(WiiUPro.L, ouch, on=WiiUPro.PRESS)
 
 
 while True:
-    remote.check_callbacks()
+    remote.update()

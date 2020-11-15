@@ -68,9 +68,9 @@ class Main():
                     self.vertical = int(self.vertical, 16)
                     self.horizontal = int(self.horizontal, 16)
                     if self.horizontal > 127:
-                        self.horizontal -= 256
+                        self.horizontal -= 255
                     if self.vertical > 127:
-                        self.vertical -= 128
+                        self.vertical -= 255
                     self.vstickpos = (self.cy - 133) + self.vertical
                     """
                     if self.id[-2:] == "00":
@@ -78,14 +78,15 @@ class Main():
                     elif self.id[-2:] == "01":
                         self.mouse.move(0, self.horizontal)
                     """
-                    self.vertical += self.cy
                     if self.id[-2:] in ["00", "01"]:
                         if self.id[-2:] == "00":
                             self.horizontal += self.censtickpos[0]
-                            self.c.coords(self.stick, self.horizontal - 5, self.cy - 5, self.horizontal + 5, self.cy + 5)
+                            self.vertical = self.censtickpos[1] + -self.vertical
+                            self.c.coords(self.stick, self.horizontal - 5, self.vertical - 5, self.horizontal + 5, self.vertical + 5)
                         else:
                             self.horizontal += self.censtickpos[1]
-                            self.c.coords(self.stick, self.censtickpos[0] - 5, self.horizontal - 5, self.censtickpos[0] + 5, self.horizontal + 5)
+                            self.vertical = self.censtickpos[0] + -self.vertical
+                            self.c.coords(self.stick, self.vertical - 5, self.horizontal - 5, self.vertical + 5, self.horizontal + 5)
                     if self.id[-2:] in ["02", "03"]:
                         if self.id[-2:] == "02":
                             self.horizontal += self.censtickpos2[0]
